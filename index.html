@@ -4,19 +4,282 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Benim Sezonum</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0d0d0f;
+      color: white;
+      min-height: 100vh;
+      padding-bottom: 90px;
+    }
+
+    .hero {
+      padding: 28px 20px 22px;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.15), #0d0d0f),
+        linear-gradient(135deg, #2a2030, #111);
+      border-bottom: 1px solid #24242a;
+    }
+
+    .mini-title {
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #aaa;
+      margin-bottom: 14px;
+    }
+
+    .season {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .quote {
+      color: #c7c7cc;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .rating {
+      display: inline-block;
+      background: #1d1d22;
+      border: 1px solid #303038;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    .section {
+      padding: 24px 16px;
+    }
+
+    .section-title {
+      font-size: 21px;
+      margin-bottom: 15px;
+    }
+
+    .episode {
+      background: #17171b;
+      border: 1px solid #28282f;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 13px;
+    }
+
+    .episode-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 9px;
+    }
+
+    .episode-code {
+      color: #9b9ba3;
+      font-size: 13px;
+    }
+
+    .episode-rating {
+      font-size: 13px;
+      color: #ffd76a;
+    }
+
+    .episode-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .episode-desc {
+      color: #aaaab2;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .tags {
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #23232a;
+      color: #d1d1d6;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+
+    .add-button {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      background: white;
+      color: #111;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(15,15,18,0.96);
+      border-top: 1px solid #29292f;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-item {
+      color: #8e8e96;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .nav-item span {
+      display: block;
+      font-size: 21px;
+      margin-bottom: 3px;
+    }
+
+    .active {
+      color: white;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>🎬 BENİM SEZONUM</h1>
-  <h2>SEZON 17</h2>
-  <p>Bu sezon gereğinden fazla olay yaşandı.</p>
 
-  <h3>Son Bölümler</h3>
+  <section class="hero">
+    <div class="mini-title">BENİM SEZONUM</div>
 
-  <p>🎞️ E01 — Mezuniyet</p>
-  <p>🎞️ E02 — Tercih Dönemi</p>
-  <p>🔒 E03 — Henüz yayınlanmadı</p>
+    <div class="season">SEZON 17</div>
 
-  <button>＋ Yeni Bölüm</button>
+    <div class="quote">
+      “Bu sezon gereğinden fazla olay yaşandı.”
+    </div>
+
+    <div class="rating">⭐ 8.4 / 10</div>
+  </section>
+
+  <main class="section">
+    <h2 class="section-title">Son Bölümler</h2>
+
+    <div id="episodeList">
+
+      <div class="episode">
+        <div class="episode-top">
+          <div class="episode-code">S17 • E01</div>
+          <div class="episode-rating">⭐ 4.3</div>
+        </div>
+
+        <div class="episode-title">Mezuniyet</div>
+
+        <div class="episode-desc">
+          Bir dönemin finali. Beklenenden biraz daha kaotik.
+        </div>
+
+        <div class="tags">
+          <span class="tag">Dram</span>
+          <span class="tag">Final</span>
+        </div>
+      </div>
+
+      <div class="episode">
+        <div class="episode-top">
+          <div class="episode-code">S17 • E02</div>
+          <div class="episode-rating">⭐ 2.7</div>
+        </div>
+
+        <div class="episode-title">Tercih Dönemi</div>
+
+        <div class="episode-desc">
+          Üniversiteler, listeler ve gereğinden fazla düşünme.
+        </div>
+
+        <div class="tags">
+          <span class="tag">Kaos</span>
+          <span class="tag">Gerilim</span>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="add-button" onclick="yeniBolum()">
+      ＋ Yeni Bölüm
+    </button>
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="nav-item active">
+      <span>⌂</span>
+      Ana Sayfa
+    </div>
+
+    <div class="nav-item">
+      <span>🎞️</span>
+      Bölümler
+    </div>
+
+    <div class="nav-item">
+      <span>👥</span>
+      Oyuncular
+    </div>
+
+    <div class="nav-item">
+      <span>●</span>
+      Profil
+    </div>
+  </nav>
+
+  <script>
+    let bolumSayisi = 2;
+
+    function yeniBolum() {
+      const baslik = prompt("Bölümün adı ne?");
+      if (!baslik) return;
+
+      const aciklama = prompt("Bu bölümde ne oldu?");
+      const puan = prompt("10 üzerinden kaç puan veriyorsun?");
+
+      bolumSayisi++;
+
+      const kart = document.createElement("div");
+      kart.className = "episode";
+
+      kart.innerHTML = `
+        <div class="episode-top">
+          <div class="episode-code">S17 • E${String(bolumSayisi).padStart(2, "0")}</div>
+          <div class="episode-rating">⭐ ${puan || "?"}</div>
+        </div>
+
+        <div class="episode-title">${baslik}</div>
+
+        <div class="episode-desc">
+          ${aciklama || "Bu bölüm için henüz açıklama eklenmedi."}
+        </div>
+
+        <div class="tags">
+          <span class="tag">Yeni Bölüm</span>
+        </div>
+      `;
+
+      document.getElementById("episodeList").appendChild(kart);
+    }
+  </script>
+
 </body>
 </html>
