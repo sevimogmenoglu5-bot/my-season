@@ -1,538 +1,646 @@
-<script>
-  const birthMonth = 8; // Eylül = 8 (JavaScript ayları 0'dan başlar)
-  const birthDay = 17;
-  const birthYear = 2008;
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benim Sezonum</title>
 
-  let episodes = JSON.parse(localStorage.getItem("mySeasonsEpisodes")) || [
-    {
-      title: "Mezuniyet",
-      description: "Bir dönemin finali. Beklenenden biraz daha kaotik.",
-      genre: "Dram",
-      rating: 4.3,
-      date: "2026-06-24"
-    },
-    {
-      title: "Tercih Dönemi",
-      description: "Üniversiteler, listeler ve gereğinden fazla düşünme.",
-      genre: "Kaos",
-      rating: 2.7,
-      date: "2026-08-01"
-    }
-  ];
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b0d;
+  --card:#17171c;
+  --card2:#202027;
+  --line:#2b2b33;
+  --text:#fff;
+  --muted:#9d9da7;
+  --soft:#d2d2d8;
+  --yellow:#ffd84d;
+}
+body{
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  padding-bottom:78px;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.page{min-height:calc(100vh - 78px)}
 
-  let cast = JSON.parse(localStorage.getItem("mySeasonsCast")) || [];
+.hero{
+  padding:28px 18px 24px;
+  background:
+    radial-gradient(circle at top right,rgba(94,61,109,.38),transparent 44%),
+    linear-gradient(180deg,#17131c 0%,var(--bg) 100%);
+  border-bottom:1px solid var(--line);
+}
+.mini-title{
+  font-size:11px;
+  letter-spacing:3px;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.season-title{
+  font-size:36px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+.season-subtitle{
+  color:var(--soft);
+  font-size:14px;
+  line-height:1.5;
+  margin-bottom:16px;
+}
+.season-rating{
+  display:inline-flex;
+  gap:8px;
+  background:var(--card2);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:9px 13px;
+  font-size:14px;
+}
 
-  /* --------------------------------
-     SEZON HESAPLAMA
-  -------------------------------- */
+.section{padding:22px 14px}
+.section-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:15px;
+}
+.section-title{
+  font-size:22px;
+  font-weight:800;
+}
+.small-note{
+  color:var(--muted);
+  font-size:12px;
+}
 
-  function getSeasonForDate(dateString) {
-    const date = dateString
-      ? new Date(dateString + "T12:00:00")
-      : new Date();
+.episode-card,.person-card,.profile-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:13px;
+}
+.episode-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.episode-code{
+  color:var(--muted);
+  font-size:13px;
+}
+.episode-rating{
+  color:var(--yellow);
+  font-size:14px;
+  font-weight:700;
+}
+.episode-title{
+  font-size:19px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+.episode-desc{
+  color:var(--soft);
+  font-size:14px;
+  line-height:1.55;
+}
+.tag-row{
+  margin-top:12px;
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+.tag{
+  background:#24242b;
+  border:1px solid #2f2f37;
+  color:#d7d7dc;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+}
 
-    let season = date.getFullYear() - birthYear;
+.primary-button{
+  width:100%;
+  border:0;
+  border-radius:16px;
+  padding:15px;
+  background:#fff;
+  color:#111;
+  font-weight:800;
+  margin-top:6px;
+}
 
-    const birthdayThatYear = new Date(
-      date.getFullYear(),
-      birthMonth,
-      birthDay,
-      0,
-      0,
-      0
-    );
+.topbar{
+  padding:20px 16px 12px;
+  border-bottom:1px solid var(--line);
+  position:sticky;
+  top:0;
+  background:rgba(11,11,13,.96);
+  backdrop-filter:blur(14px);
+  z-index:4;
+}
+.topbar h1{font-size:24px}
+.topbar p{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:4px;
+}
 
-    if (date < birthdayThatYear) {
-      season--;
-    }
+.person-name{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+.person-role{
+  color:var(--muted);
+  font-size:13px;
+}
+.profile-card h3{
+  font-size:16px;
+  margin-bottom:8px;
+}
+.profile-card p{
+  color:var(--soft);
+  font-size:14px;
+  line-height:1.55;
+}
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:10px;
+}
+.stat{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+}
+.stat-value{
+  font-size:22px;
+  font-weight:800;
+  margin-bottom:4px;
+}
+.stat-label{
+  color:var(--muted);
+  font-size:12px;
+}
 
-    return season;
-  }
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:72px;
+  background:rgba(13,13,15,.98);
+  border-top:1px solid var(--line);
+  display:flex;
+  z-index:10;
+}
+.nav-button{
+  flex:1;
+  border:0;
+  background:transparent;
+  color:#7f7f89;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  font-size:11px;
+}
+.nav-button .icon{font-size:20px}
+.nav-button.active{color:#fff}
 
-  function getCurrentSeason() {
-    return getSeasonForDate();
-  }
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  z-index:50;
+  display:flex;
+  align-items:flex-end;
+}
+.modal-box{
+  width:100%;
+  max-height:92vh;
+  overflow-y:auto;
+  background:#141418;
+  border-radius:24px 24px 0 0;
+  padding:20px 16px 28px;
+  border-top:1px solid var(--line);
+}
+.modal-title{
+  font-size:22px;
+  font-weight:800;
+  margin-bottom:18px;
+}
+.field{margin-bottom:15px}
+.field label{
+  display:block;
+  font-size:13px;
+  color:var(--soft);
+  margin-bottom:7px;
+}
+.field input,.field textarea,.field select{
+  width:100%;
+  background:#202027;
+  border:1px solid #31313a;
+  color:#fff;
+  border-radius:13px;
+  padding:12px;
+  outline:none;
+}
+.field textarea{
+  min-height:95px;
+  resize:vertical;
+}
+.rating-value{
+  font-size:18px;
+  font-weight:800;
+  margin-top:8px;
+  color:var(--yellow);
+}
+.modal-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:18px;
+}
+.cancel-button,.save-button{
+  border:0;
+  border-radius:14px;
+  padding:14px;
+  font-weight:800;
+}
+.cancel-button{
+  background:#27272e;
+  color:#fff;
+}
+.save-button{
+  background:#fff;
+  color:#111;
+}
+.empty{
+  color:var(--muted);
+  text-align:center;
+  padding:24px 10px;
+  border:1px dashed #33333a;
+  border-radius:16px;
+  margin-bottom:13px;
+}
+</style>
+</head>
 
-  function getEpisodesForSeason(season) {
-    return episodes.filter(episode => {
-      return getSeasonForDate(episode.date) === season;
-    });
-  }
+<body>
 
-  function getSeasonAverage(season) {
-    const seasonEpisodes = getEpisodesForSeason(season);
+<section id="homePage" class="page">
+  <div class="hero">
+    <div class="mini-title">BENİM SEZONUM</div>
+    <div id="homeSeasonTitle" class="season-title">SEZON</div>
+    <div class="season-subtitle">
+      “Bu sezon gereğinden fazla olay yaşandı.”
+    </div>
+    <div class="season-rating">
+      ⭐ <span id="seasonAverage">—</span> / 10
+    </div>
+  </div>
 
-    if (seasonEpisodes.length === 0) {
-      return "—";
-    }
+  <main class="section">
+    <div class="section-header">
+      <div class="section-title">Son Bölümler</div>
+      <div id="episodeCountNote" class="small-note"></div>
+    </div>
 
-    const total = seasonEpisodes.reduce((sum, episode) => {
-      return sum + Number(episode.rating || 0);
-    }, 0);
+    <div id="homeEpisodeList"></div>
 
-    return (total / seasonEpisodes.length).toFixed(1);
-  }
+    <button class="primary-button" onclick="openEpisodeModal()">
+      ＋ Yeni Bölüm
+    </button>
+  </main>
+</section>
 
-  function getEpisodeNumber(episodeIndex) {
-    const episode = episodes[episodeIndex];
-    const season = getSeasonForDate(episode.date);
+<section id="episodesPage" class="page hidden">
+  <div class="topbar">
+    <h1>Bölümler</h1>
+    <p>Tüm sezonların bölüm arşivi.</p>
+  </div>
 
-    let number = 0;
+  <main class="section">
+    <div id="allEpisodeList"></div>
 
-    for (let i = 0; i <= episodeIndex; i++) {
-      if (getSeasonForDate(episodes[i].date) === season) {
-        number++;
-      }
-    }
+    <button class="primary-button" onclick="openEpisodeModal()">
+      ＋ Yeni Bölüm
+    </button>
+  </main>
+</section>
 
-    return number;
-  }
+<section id="castPage" class="page hidden">
+  <div class="topbar">
+    <h1>Oyuncular</h1>
+    <p>Hayatının kadrosu.</p>
+  </div>
 
-  /* --------------------------------
-     KAYIT
-  -------------------------------- */
+  <main class="section">
+    <div id="castList"></div>
 
-  function saveData() {
-    localStorage.setItem(
-      "mySeasonsEpisodes",
-      JSON.stringify(episodes)
-    );
+    <button class="primary-button" onclick="openCastModal()">
+      ＋ Oyuncu Ekle
+    </button>
+  </main>
+</section>
 
-    localStorage.setItem(
-      "mySeasonsCast",
-      JSON.stringify(cast)
-    );
-  }
+<section id="profilePage" class="page hidden">
+  <div class="topbar">
+    <h1>Profil</h1>
+    <p>Sezon ve istatistikler.</p>
+  </div>
 
-  /* --------------------------------
-     ALT MENÜ
-  -------------------------------- */
+  <main class="section">
+    <div class="profile-card">
+      <h3>🎂 Sezon Sistemi</h3>
+      <p>
+        Her yıl 17 Eylül’de yeni sezon başlar.
+        Eski sezonlardaki bölümler arşivde kalır.
+      </p>
+    </div>
 
-  function showPage(pageId, button) {
-    document.querySelectorAll(".page").forEach(page => {
-      page.classList.add("hidden");
-    });
-
-    document.getElementById(pageId).classList.remove("hidden");
-
-    document.querySelectorAll(".nav-button").forEach(btn => {
-      btn.classList.remove("active");
-    });
-
-    button.classList.add("active");
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  }
-
-  /* --------------------------------
-     BÖLÜMLERİ GÖSTER
-  -------------------------------- */
-
-  function renderEpisodes() {
-    const currentSeason = getCurrentSeason();
-    const currentEpisodes = getEpisodesForSeason(currentSeason);
-    const average = getSeasonAverage(currentSeason);
-
-    document.getElementById("homeSeasonTitle").textContent =
-      `SEZON ${currentSeason}`;
-
-    document.getElementById("profileSeason").textContent =
-      currentSeason;
-
-    document.getElementById("seasonAverage").textContent =
-      average;
-
-    document.getElementById("profileAverage").textContent =
-      average;
-
-    document.getElementById("profileEpisodeCount").textContent =
-      episodes.length;
-
-    document.getElementById("episodeCountNote").textContent =
-      `${currentEpisodes.length} bölüm`;
-
-    const homeList =
-      document.getElementById("homeEpisodeList");
-
-    const allList =
-      document.getElementById("allEpisodeList");
-
-    homeList.innerHTML = "";
-    allList.innerHTML = "";
-
-    /* ANA SAYFA:
-       SADECE AKTİF SEZON
-    */
-
-    if (currentEpisodes.length === 0) {
-      homeList.innerHTML = `
-        <div class="empty">
-          Sezon ${currentSeason} henüz başlamış gibi görünüyor.
-          İlk bölümünü ekleyebilirsin. 🎬
-        </div>
-      `;
-    } else {
-      const currentSeasonIndexes = [];
-
-      episodes.forEach((episode, index) => {
-        if (
-          getSeasonForDate(episode.date) === currentSeason
-        ) {
-          currentSeasonIndexes.push(index);
-        }
-      });
-
-      currentSeasonIndexes
-        .slice(-3)
-        .reverse()
-        .forEach(index => {
-          homeList.innerHTML +=
-            createEpisodeCard(index);
-        });
-    }
-
-    /* BÖLÜMLER SAYFASI:
-       TÜM SEZONLAR
-    */
-
-    if (episodes.length === 0) {
-      allList.innerHTML = `
-        <div class="empty">
-          Henüz hiçbir bölüm yok.
-        </div>
-      `;
-    } else {
-      episodes
-        .map((episode, index) => ({
-          episode,
-          index
-        }))
-        .reverse()
-        .forEach(item => {
-          allList.innerHTML +=
-            createEpisodeCard(item.index);
-        });
-    }
-  }
-
-  function createEpisodeCard(index) {
-    const episode = episodes[index];
-
-    const season =
-      getSeasonForDate(episode.date);
-
-    const episodeNumber =
-      String(getEpisodeNumber(index)).padStart(2, "0");
-
-    const rating =
-      Number(episode.rating).toFixed(1);
-
-    return `
-      <div class="episode-card">
-
-        <div class="episode-top">
-
-          <div class="episode-code">
-            S${season} • E${episodeNumber}
-          </div>
-
-          <div class="episode-rating">
-            ⭐ ${rating}
-          </div>
-
-        </div>
-
-        <div class="episode-title">
-          ${escapeHtml(episode.title)}
-        </div>
-
-        <div class="episode-desc">
-          ${
-            escapeHtml(
-              episode.description ||
-              "Bu bölüm için henüz açıklama yok."
-            )
-          }
-        </div>
-
-        <div class="tag-row">
-
-          <span class="tag">
-            ${escapeHtml(episode.genre)}
-          </span>
-
-          ${
-            episode.date
-              ? `
-                <span class="tag">
-                  ${formatDate(episode.date)}
-                </span>
-              `
-              : ""
-          }
-
-          <span class="tag">
-            Sezon ${season}
-          </span>
-
-        </div>
-
+    <div class="stat-grid">
+      <div class="stat">
+        <div id="profileSeason" class="stat-value">—</div>
+        <div class="stat-label">Aktif sezon</div>
       </div>
-    `;
+
+      <div class="stat">
+        <div id="profileEpisodeCount" class="stat-value">0</div>
+        <div class="stat-label">Bu sezon bölüm</div>
+      </div>
+
+      <div class="stat">
+        <div id="profileAverage" class="stat-value">—</div>
+        <div class="stat-label">Sezon puanı</div>
+      </div>
+
+      <div class="stat">
+        <div id="profileCastCount" class="stat-value">0</div>
+        <div class="stat-label">Oyuncu</div>
+      </div>
+    </div>
+  </main>
+</section>
+
+<nav class="bottom-nav">
+  <button class="nav-button active" onclick="showPage('homePage',this)">
+    <span class="icon">⌂</span>
+    <span>Ana Sayfa</span>
+  </button>
+
+  <button class="nav-button" onclick="showPage('episodesPage',this)">
+    <span class="icon">🎞️</span>
+    <span>Bölümler</span>
+  </button>
+
+  <button class="nav-button" onclick="showPage('castPage',this)">
+    <span class="icon">👥</span>
+    <span>Oyuncular</span>
+  </button>
+
+  <button class="nav-button" onclick="showPage('profilePage',this)">
+    <span class="icon">●</span>
+    <span>Profil</span>
+  </button>
+</nav>
+
+<div id="episodeModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-title">Yeni Bölüm</div>
+
+    <div class="field">
+      <label>Bölüm adı</label>
+      <input id="episodeTitleInput" type="text" placeholder="Örn. Yeni Başlangıçlar">
+    </div>
+
+    <div class="field">
+      <label>Tarih</label>
+      <input id="episodeDateInput" type="date">
+    </div>
+
+    <div class="field">
+      <label>Özet</label>
+      <textarea id="episodeDescriptionInput" placeholder="Bu bölümde ne oldu?"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Tür</label>
+      <select id="episodeGenreInput">
+        <option>Kaos</option>
+        <option>Dram</option>
+        <option>Komedi</option>
+        <option>Macera</option>
+        <option>Gerilim</option>
+        <option>Slice of Life</option>
+        <option>Final</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Puan — 1 ile 10 arası</label>
+      <input
+        id="episodeRatingInput"
+        type="range"
+        min="1"
+        max="10"
+        value="7.5"
+        step="0.5"
+        oninput="updateRatingPreview()"
+      >
+      <div class="rating-value">
+        ⭐ <span id="ratingPreview">7.5</span> / 10
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="cancel-button" onclick="closeEpisodeModal()">İptal</button>
+      <button class="save-button" onclick="saveEpisode()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div id="castModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-title">Oyuncu Ekle</div>
+
+    <div class="field">
+      <label>İsim</label>
+      <input id="castNameInput" type="text" placeholder="İsim">
+    </div>
+
+    <div class="field">
+      <label>Rol</label>
+      <select id="castRoleInput">
+        <option>Ana Kadro</option>
+        <option>Yan Karakter</option>
+        <option>Konuk Oyuncu</option>
+        <option>Eski Kadro</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Not</label>
+      <textarea id="castNoteInput" placeholder="Bu kişi hakkında kısa bir not..."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="cancel-button" onclick="closeCastModal()">İptal</button>
+      <button class="save-button" onclick="saveCast()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const birthYear=2008;
+const birthMonth=8;
+const birthDay=17;
+
+const defaultEpisodes=[
+  {
+    title:"Mezuniyet",
+    description:"Bir dönemin finali. Beklenenden biraz daha kaotik.",
+    genre:"Dram",
+    rating:4.3,
+    date:"2026-06-24"
+  },
+  {
+    title:"Tercih Dönemi",
+    description:"Üniversiteler, listeler ve gereğinden fazla düşünme.",
+    genre:"Kaos",
+    rating:2.7,
+    date:"2026-08-01"
   }
+];
 
-  /* --------------------------------
-     YENİ BÖLÜM
-  -------------------------------- */
+let episodes=JSON.parse(localStorage.getItem("mySeasonsEpisodes"))||defaultEpisodes;
+let cast=JSON.parse(localStorage.getItem("mySeasonsCast"))||[];
 
-  function openEpisodeModal() {
-    document
-      .getElementById("episodeModal")
-      .classList.remove("hidden");
+function getSeasonForDate(dateString){
+  const date=dateString
+    ? new Date(dateString+"T12:00:00")
+    : new Date();
 
-    const today = new Date();
+  let age=date.getFullYear()-birthYear;
 
-    const year =
-      today.getFullYear();
+  const birthday=new Date(
+    date.getFullYear(),
+    birthMonth,
+    birthDay
+  );
 
-    const month =
-      String(today.getMonth() + 1).padStart(2, "0");
+  if(date<birthday) age--;
 
-    const day =
-      String(today.getDate()).padStart(2, "0");
+  return age;
+}
 
-    document.getElementById(
-      "episodeDateInput"
-    ).value = `${year}-${month}-${day}`;
-  }
+function getCurrentSeason(){
+  return getSeasonForDate();
+}
 
-  function closeEpisodeModal() {
-    document
-      .getElementById("episodeModal")
-      .classList.add("hidden");
-  }
+function getEpisodesForSeason(season){
+  return episodes.filter(
+    episode=>getSeasonForDate(episode.date)===season
+  );
+}
 
-  function updateRatingPreview() {
-    const value =
-      document.getElementById(
-        "episodeRatingInput"
-      ).value;
+function getSeasonAverage(season){
+  const list=getEpisodesForSeason(season);
 
-    document.getElementById(
-      "ratingPreview"
-    ).textContent = value;
-  }
+  if(!list.length) return "—";
 
-  function saveEpisode() {
-    const title =
-      document.getElementById(
-        "episodeTitleInput"
-      ).value.trim();
+  const total=list.reduce(
+    (sum,episode)=>sum+Number(episode.rating||0),
+    0
+  );
 
-    const description =
-      document.getElementById(
-        "episodeDescriptionInput"
-      ).value.trim();
+  return (total/list.length).toFixed(1);
+}
 
-    const genre =
-      document.getElementById(
-        "episodeGenreInput"
-      ).value;
+function getEpisodeNumber(globalIndex){
+  const season=getSeasonForDate(episodes[globalIndex].date);
+  let number=0;
 
-    const rating =
-      Number(
-        document.getElementById(
-          "episodeRatingInput"
-        ).value
-      );
-
-    const date =
-      document.getElementById(
-        "episodeDateInput"
-      ).value;
-
-    if (!title) {
-      alert("Bölüm adı yazmalısın.");
-      return;
+  for(let i=0;i<=globalIndex;i++){
+    if(getSeasonForDate(episodes[i].date)===season){
+      number++;
     }
-
-    if (!date) {
-      alert("Bölümün tarihini seçmelisin.");
-      return;
-    }
-
-    episodes.push({
-      title,
-      description,
-      genre,
-      rating,
-      date
-    });
-
-    saveData();
-    renderEpisodes();
-
-    document.getElementById(
-      "episodeTitleInput"
-    ).value = "";
-
-    document.getElementById(
-      "episodeDescriptionInput"
-    ).value = "";
-
-    document.getElementById(
-      "episodeRatingInput"
-    ).value = "7.5";
-
-    document.getElementById(
-      "ratingPreview"
-    ).textContent = "7.5";
-
-    closeEpisodeModal();
   }
 
-  /* --------------------------------
-     OYUNCULAR
-  -------------------------------- */
+  return number;
+}
 
-  function renderCast() {
-    const castList =
-      document.getElementById("castList");
+function saveData(){
+  localStorage.setItem(
+    "mySeasonsEpisodes",
+    JSON.stringify(episodes)
+  );
 
-    document.getElementById(
-      "profileCastCount"
-    ).textContent = cast.length;
+  localStorage.setItem(
+    "mySeasonsCast",
+    JSON.stringify(cast)
+  );
+}
 
-    castList.innerHTML = "";
+function showPage(pageId,button){
+  document.querySelectorAll(".page").forEach(
+    page=>page.classList.add("hidden")
+  );
 
-    if (cast.length === 0) {
-      castList.innerHTML = `
-        <div class="empty">
-          Henüz oyuncu eklenmedi.
+  document
+    .getElementById(pageId)
+    .classList.remove("hidden");
+
+  document.querySelectorAll(".nav-button").forEach(
+    nav=>nav.classList.remove("active")
+  );
+
+  button.classList.add("active");
+  window.scrollTo(0,0);
+}
+
+function createEpisodeCard(index){
+  const episode=episodes[index];
+  const season=getSeasonForDate(episode.date);
+
+  const number=String(
+    getEpisodeNumber(index)
+  ).padStart(2,"0");
+
+  return `
+    <div class="episode-card">
+      <div class="episode-top">
+        <div class="episode-code">
+          S${season} • E${number}
         </div>
-      `;
 
-      return;
-    }
-
-    cast.forEach(person => {
-      castList.innerHTML += `
-        <div class="person-card">
-
-          <div class="person-name">
-            ${escapeHtml(person.name)}
-          </div>
-
-          <div class="person-role">
-            ${escapeHtml(person.role)}
-          </div>
-
-          ${
-            person.note
-              ? `
-                <div
-                  class="episode-desc"
-                  style="margin-top:10px;"
-                >
-                  ${escapeHtml(person.note)}
-                </div>
-              `
-              : ""
-          }
-
+        <div class="episode-rating">
+          ⭐ ${Number(episode.rating).toFixed(1)}
         </div>
-      `;
-    });
-  }
+      </div>
 
-  function openCastModal() {
-    document
-      .getElementById("castModal")
-      .classList.remove("hidden");
-  }
+      <div class="episode-title">
+        ${escapeHtml(episode.title)}
+      </div>
 
-  function closeCastModal() {
-    document
-      .getElementById("castModal")
-      .classList.add("hidden");
-  }
+      <div class="episode-desc">
+        ${escapeHtml(
+          episode.description||
+          "Bu bölüm için henüz açıklama yok."
+        )}
+      </div>
 
-  function saveCast() {
-    const name =
-      document.getElementById(
-        "castNameInput"
-      ).value.trim();
-
-    const role =
-      document.getElementById(
-        "castRoleInput"
-      ).value;
-
-    const note =
-      document.getElementById(
-        "castNoteInput"
-      ).value.trim();
-
-    if (!name) {
-      alert("Oyuncunun ismini yazmalısın.");
-      return;
-    }
-
-    cast.push({
-      name,
-      role,
-      note
-    });
-
-    saveData();
-    renderCast();
-
-    document.getElementById(
-      "castNameInput"
-    ).value = "";
-
-    document.getElementById(
-      "castNoteInput"
-    ).value = "";
-
-    closeCastModal();
-  }
-
-  /* --------------------------------
-     TARİH
-  -------------------------------- */
-
-  function formatDate(dateString) {
-    const date =
-      new Date(dateString + "T12:00:00");
-
-    return date.toLocaleDateString(
-      "tr-TR",
-      {
-        day: "numeric",
-        month: "short",
-        year: "numeric"
-      }
-    );
-  }
-
-  function escapeHtml(text) {
-    const div =
-      document.createElement("div");
-
-    div.textContent =
-      String(text ?? "");
-
-    return div.innerHTML;
-  }
-
-  /* --------------------------------
-     UYGULAMAYI BAŞLAT
-  -------------------------------- */
-
-  renderEpisodes();
-  renderCast();
-    </script>
+      <div class
